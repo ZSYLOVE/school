@@ -21,3 +21,9 @@ mybatis-plus:
           id-type: ASSIGN_ID
       mapper-locations: classpath:mapping/*.xml
       type-aliases-package: org.example.entity
+satoken-config:
+    whitelist:
+      - /user/login
+      - /user/logout
+      - /error
+      - /favicon.ico

@@ -19,6 +19,7 @@ redis:
       max-idle: 10
       # 连接池中的最小空闲连接
       min-idle: 0
+
 sa-token:
   # token 名称（同时也是 cookie 名称）
   token-name: satoken

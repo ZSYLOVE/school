@@ -22,20 +22,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class SaTokenConfigure implements WebMvcConfigurer {
 
-    // 注册 Sa-Token 全局过滤器，用于初始化上下文
-    @Bean
-    public FilterRegistrationBean<SaServletFilter> saServletFilter() {
-        FilterRegistrationBean<SaServletFilter> frb = new FilterRegistrationBean<>();
-        frb.setFilter(new SaServletFilter());
-        frb.addUrlPatterns("/*");
-        frb.setOrder(-100); // 设置过滤器优先级，确保尽早加载
-        return frb;
-    }
-
     // 添加Sa-Token上下文配置
     @Bean
     public SaTokenContext saTokenContext() {
-        return new SaTokenContextDefaultImpl();
+        return new cn.dev33.satoken.context.SaTokenContextForThreadLocal();
     }
     private final SaTokenProperties saTokenProperties;
     
