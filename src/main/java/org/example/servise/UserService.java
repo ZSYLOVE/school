@@ -7,6 +7,7 @@ import org.example.entitys.LoginUser;
 import org.example.entitys.User;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 public interface UserService extends IService<User> {
     SaResult login(@Valid LoginUser loginUser);
@@ -15,4 +16,6 @@ public interface UserService extends IService<User> {
     SaResult updateUser(User user);
     SaResult saveUser(User user);
     SaResult deletebyid(Long id);
+    
+    SaResult pageUser(Integer page, Integer size, Map<String, Object> searchMap);
 }

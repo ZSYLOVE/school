@@ -11,6 +11,8 @@ import org.example.servise.UserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -39,8 +41,13 @@ public class UserController {
     public SaResult save(@Validated (Valida.Create.class)@RequestBody User user) {
         return userService.saveUser(user);
     }
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     public SaResult delete(Long id) {
         return userService.deletebyid(id);
+    }
+    @GetMapping("/page")
+    public  SaResult selectPage(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "10") Integer pageSize, Map<String, Object> search) {
+        return userService.pageUser(currentPage,pageSize,search);
+
     }
 }

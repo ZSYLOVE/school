@@ -5,6 +5,7 @@ import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.example.config.SaTokenProperties;
 import org.example.entitys.LoginUser;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -117,5 +119,22 @@ public class UserServiceImp extends ServiceImpl<UserMapper, User> implements Use
             return SaResult.error("用户不存在");
         userMapper.deleteById(id);
         return SaResult.ok();
+    }
+
+    //eq()（等于） ne()（不等于） gt()（大于） ge()（大于等于） lt()（小于）le()（小于等于）
+    @Override
+    public SaResult pageUser(Integer page, Integer size, Map<String, Object> searchMap) {
+        Page<User> userPage=new Page<>(page,size);
+        LambdaQueryWrapper<User> wrapper=new LambdaQueryWrapper<>();
+        // 查询提交时间在某个范围之间的用户
+        if (searchMap.get("startTime") != null && !searchMap.get("startTime").toString().isEmpty()) {
+            wrapper.ge(User::getSubmitTime, searchMap.get("startTime"));  // submit_time >= startTime
+        }
+
+        if (searchMap.get("endTime") != null && !searchMap.get("endTime").toString().isEmpty()) {
+            wrapper.le(User::getSubmitTime, searchMap.get("endTime"));    // submit_time <= endTime
+        }
+        Page<User> userPage1 = userMapper.selectPage(userPage, wrapper);
+        return SaResult.data(userPage1);
     }
 }
