@@ -10,4 +10,8 @@ import javax.validation.Valid;
 
 public interface UserService extends IService<User> {
     SaResult login(@Valid LoginUser loginUser);
+    SaResult logout();
+    SaResult selectUser(Long id);
+    SaResult updateUser(User user);
+    SaResult saveUser(User user);
 }

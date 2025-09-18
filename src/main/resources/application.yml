@@ -27,3 +27,4 @@ satoken-config:
       - /user/logout
       - /error
       - /favicon.ico
+    verifyKey: zzz

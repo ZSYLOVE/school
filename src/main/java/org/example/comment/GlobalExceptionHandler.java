@@ -1,10 +1,13 @@
-package org.example.config;
+package org.example.comment;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.util.SaResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Objects;
 
 @ControllerAdvice
 @ResponseBody
@@ -30,5 +33,11 @@ public class GlobalExceptionHandler {
     public SaResult handleException(Exception e) {
         // 处理其他未捕获的异常
         return SaResult.error("服务器内部错误"+e.getMessage()).setCode(500);
+    }
+    //拦截Valid参数校验异常
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public SaResult handleValidException(MethodArgumentNotValidException e) {
+        String errorMsg= Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
+        return SaResult.error(errorMsg);
     }
 }

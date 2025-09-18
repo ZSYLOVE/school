@@ -39,3 +39,4 @@ sa-token:
   is-read-header: true
   is-read-body: false
   is-read-cookie: false
+
