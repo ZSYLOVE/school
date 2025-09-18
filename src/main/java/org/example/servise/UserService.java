@@ -14,4 +14,5 @@ public interface UserService extends IService<User> {
     SaResult selectUser(Long id);
     SaResult updateUser(User user);
     SaResult saveUser(User user);
+    SaResult deletebyid(Long id);
 }

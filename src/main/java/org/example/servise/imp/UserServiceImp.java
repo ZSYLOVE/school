@@ -108,4 +108,14 @@ public class UserServiceImp extends ServiceImpl<UserMapper, User> implements Use
         user.setPassword(SaSecureUtil.aesEncrypt(saTokenProperties.getVerifyKey(),user.getPassword()));
         return userMapper.insert(user)>0?SaResult.ok():SaResult.error();
     }
+
+    @Override
+    public SaResult deletebyid(Long id) {
+        //1.先查询是否有该用户
+        User user=userMapper.selectById(id);
+        if (user==null)
+            return SaResult.error("用户不存在");
+        userMapper.deleteById(id);
+        return SaResult.ok();
+    }
 }

@@ -1,7 +1,6 @@
 package org.example.controller;
 
 
-import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.util.SaResult;
 import lombok.RequiredArgsConstructor;
 import org.example.comment.Valida;
@@ -39,5 +38,9 @@ public class UserController {
     @PostMapping("/saveUser")
     public SaResult save(@Validated (Valida.Create.class)@RequestBody User user) {
         return userService.saveUser(user);
+    }
+    @PostMapping("/delete")
+    public SaResult delete(Long id) {
+        return userService.deletebyid(id);
     }
 }
