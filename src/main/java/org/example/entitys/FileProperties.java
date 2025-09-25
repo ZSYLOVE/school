@@ -1,4 +1,4 @@
-package org.example.config;
+package org.example.entitys;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,18 +8,17 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
-//编写配文件类
-@Data
 @Configuration
-@ConfigurationProperties(prefix = "satoken-config")
+@ConfigurationProperties(prefix = "file-config")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaTokenProperties implements Serializable {
+public class FileProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private List<String> whitelist;
-    private String verifyKey = "zzz";
+    private String imgAddress;
+    private String pdfAddress;
+    private String imgHttpAddress;
+    private String pdfHttpAddress;
 }
-

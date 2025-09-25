@@ -9,9 +9,14 @@ spring:
     url: jdbc:mysql://localhost:3306/school?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&useSSL=false
     username: root
     password: 12345678
+  servlet:
+      multipart:
+        max-file-size: 50MB
+        max-request-size: 100MB
   config:
     import:
       - classpath:satoken-config.yml
+      - classpath:file-config.yml
 mybatis-plus:
       configuration:
         map-underscore-to-camel-case: true
@@ -27,4 +32,5 @@ satoken-config:
       - /user/logout
       - /error
       - /favicon.ico
+      - /test/upload
     verifyKey: zzz

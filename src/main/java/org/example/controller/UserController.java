@@ -18,7 +18,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @PostMapping("/login")
     public SaResult login(@RequestBody LoginUser loginUser) {
@@ -33,6 +32,7 @@ public class UserController {
     public SaResult selectUser(Long id) {
         return userService.selectUser(id);
     }
+
     @PostMapping("/update")
     public SaResult update(@Validated(Valida.Update.class) @RequestBody User user) {
         return userService.updateUser(user);
@@ -41,10 +41,12 @@ public class UserController {
     public SaResult save(@Validated (Valida.Create.class)@RequestBody User user) {
         return userService.saveUser(user);
     }
+
     @GetMapping("/delete")
     public SaResult delete(Long id) {
         return userService.deletebyid(id);
     }
+
     @GetMapping("/page")
     public  SaResult selectPage(@RequestParam(defaultValue = "1") Integer currentPage, @RequestParam(defaultValue = "10") Integer pageSize, Map<String, Object> search) {
         return userService.pageUser(currentPage,pageSize,search);

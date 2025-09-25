@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -77,5 +78,12 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 //            return JwtUtil.createJWT(loginId.toString());    // 随机60位长度字符串
 //        };
 //    }
+// 配置静态资源映射
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 将 http://localhost:8081/image/** 映射到 C:/file/image/
+        registry.addResourceHandler("/image/**")
+                .addResourceLocations("file:C:/file/image/");
+    }
 }
 
