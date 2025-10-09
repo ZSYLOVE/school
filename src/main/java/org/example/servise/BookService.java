@@ -23,4 +23,5 @@ public interface BookService extends IService<Book> {
 
     List<String> getImagesNames();
 
+    SaResult selectBook(Long id);
 }

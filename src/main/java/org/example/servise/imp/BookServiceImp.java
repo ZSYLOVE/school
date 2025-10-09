@@ -15,6 +15,9 @@ import org.example.mapper.FileMapper;
 import org.example.mapper.UserMapper;
 import org.example.servise.BookService;
 import org.example.util.FilesUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,52 +106,29 @@ public class BookServiceImp extends ServiceImpl<BookMapper, Book> implements Boo
         return fileMapper.insert(build)>0?SaResult.ok("保存成功"):SaResult.error("保存失败");
     }
     /**
-     * 修改书籍信息
-     * @param files
-     * @param book
-     * @return
-     */
-    @Override
-    public SaResult updateBook(MultipartFile[] files, Book book) {
-
-        Book book1 = bookMapper.selectById(book.getId());
-        if(book1==null) return  SaResult.error("未查询出要修改的书籍信息");
-        if (files!=null&&files[0]!=null){
-            Map<String, Object> upload = filesUtils.upload(files[0]);
-            if (upload.get("filePath") == null) return SaResult.error("未按照规定格式传递文件");
-            book.setCoverImage(upload.get("filePath").toString());
-        }
-        if (files!=null&&files[1]!=null){
-            Map<String, Object> upload = filesUtils.upload(files[0]);
-            if (upload.get("filePath") == null) return SaResult.error("未按照规定格式传递文件");
-            book.setBackImage(upload.get("filePath").toString());
-        }
-        return bookMapper.updateById(book)>0?SaResult.ok("修改成功"):SaResult.error("修改失败");
-    }
-    /**
      * 删除书籍
      * @param id
      * @return
      */
-    @Override
-    public SaResult deleteBook(Long id) {
-        Book book = bookMapper.selectById(id);
-        if(book==null) return SaResult.error("未找到需要删除的书籍信息");
-        String coverImage = book.getCoverImage();
-        String backImage = book.getBackImage();
-        filesUtils.deleteFile(coverImage);
-        filesUtils.deleteFile(backImage);
-        //查询是否有上传书籍内容信息
-        LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(File::getBookId,book.getId());
-        File file = fileMapper.selectOne(queryWrapper);
-        if(file!=null){
-            filesUtils.deleteFile(file.getPathFileName());
-            fileMapper.delete(queryWrapper);
-        }
-        bookMapper.deleteById(id);
-        return SaResult.ok("删除成功");
-    }
+//    @Override
+//    public SaResult deleteBook(Long id) {
+//        Book book = bookMapper.selectById(id);
+//        if(book==null) return SaResult.error("未找到需要删除的书籍信息");
+//        String coverImage = book.getCoverImage();
+//        String backImage = book.getBackImage();
+//        filesUtils.deleteFile(coverImage);
+//        filesUtils.deleteFile(backImage);
+//        //查询是否有上传书籍内容信息
+//        LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(File::getBookId,book.getId());
+//        File file = fileMapper.selectOne(queryWrapper);
+//        if(file!=null){
+//            filesUtils.deleteFile(file.getPathFileName());
+//            fileMapper.delete(queryWrapper);
+//        }
+//        bookMapper.deleteById(id);
+//        return SaResult.ok("删除成功");
+//    }
 
     /**
      * 分页查询书籍
@@ -182,6 +162,64 @@ public class BookServiceImp extends ServiceImpl<BookMapper, Book> implements Boo
             list.add(book.getCoverImage().substring(book.getCoverImage().lastIndexOf("/") + 1));
         }
         return list;
+    }
+
+
+    @Cacheable(value = "bookCache",key = "#id")  //查看
+    public SaResult selectBook(Long id) {
+        Book book = bookMapper.selectById(id);
+        if (book==null) return SaResult.error("未查询出书籍信息");
+        book.setCoverImage(book.getCoverImage().replace(fileProperties.getImgAddress(), fileProperties.getImgHttpAddress()));
+        book.setBackImage(book.getBackImage().replace(fileProperties.getImgAddress(), fileProperties.getImgHttpAddress()));
+        LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(File::getBookId, id);
+        File file = fileMapper.selectOne(queryWrapper);
+        if (file!=null) book.setFileName(file.getPathFileName().replace(fileProperties.getPdfAddress(),fileProperties.getPdfHttpAddress()));
+        return SaResult.data(book);
+    }
+
+    @Override
+    @CachePut(value = "bookCache",key = "#book.id")     //修改
+    public SaResult updateBook(MultipartFile[] files, Book book) {
+        Book book1 = bookMapper.selectById(book.getId());
+        if(book1==null) return  SaResult.error("未查询出要修改的书籍信息");
+        if (files!=null&&files[0]!=null){
+            Map<String, Object> upload = filesUtils.upload(files[0]);
+            if (upload.get("filePath") == null) return SaResult.error("未按照规定格式传递文件");
+            book.setCoverImage(upload.get("filePath").toString());
+        }
+        if (files!=null&&files[1]!=null){
+            Map<String, Object> upload = filesUtils.upload(files[0]);
+            if (upload.get("filePath") == null) return SaResult.error("未按照规定格式传递文件");
+            book.setBackImage(upload.get("filePath").toString());
+        }
+        int result = bookMapper.updateById(book);
+        if(result > 0) {
+            Book updated = bookMapper.selectById(book.getId());
+            return SaResult.data(updated);
+        }
+        return SaResult.error("修改失败");
+    }
+
+    @Override
+    @CacheEvict(value = "bookCache",key = "#id")   //删除
+    public SaResult deleteBook(Long id) {
+        Book book = bookMapper.selectById(id);
+        if(book==null) return SaResult.error("未找到需要删除的书籍信息");
+        String coverImage = book.getCoverImage();
+        String backImage = book.getBackImage();
+        filesUtils.deleteFile(coverImage);
+        filesUtils.deleteFile(backImage);
+        //查询是否有上传书籍内容信息
+        LambdaQueryWrapper<File> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(File::getBookId,book.getId());
+        File file = fileMapper.selectOne(queryWrapper);
+        if(file!=null){
+            filesUtils.deleteFile(file.getPathFileName());
+            fileMapper.delete(queryWrapper);
+        }
+        bookMapper.deleteById(id);
+        return SaResult.ok("删除成功");
     }
 }
 

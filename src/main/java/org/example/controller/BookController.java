@@ -22,7 +22,7 @@ public class BookController {
     }
 
     @GetMapping("/id")
-    public SaResult selectook(@RequestParam Long id) {
+    public SaResult selectbook(@RequestParam Long id) {
         return bookService.getBookById(id);
     }
 
@@ -66,5 +66,9 @@ public class BookController {
             searchMap.put("title", title.trim());
         }
         return bookService.pageBook(page, size, searchMap);
+    }
+    @GetMapping("/findbook")
+    public SaResult findbook(@RequestParam Long id) {
+        return bookService.selectBook(id);
     }
 }
