@@ -17,6 +17,7 @@ spring:
     import:
       - classpath:satoken-config.yml
       - classpath:file-config.yml
+      - classpath:quartz-config.yml
 mybatis-plus:
       configuration:
         map-underscore-to-camel-case: true
