@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -171,4 +172,19 @@ public class BookServiceImp extends ServiceImpl<BookMapper, Book> implements Boo
         Page<Book> result = bookMapper.selectPage(bookPage, queryWrapper);
         return SaResult.data(result);
     }
+
+    @Override
+    public List<String> getImagesNames() {
+        List<String> list = new ArrayList<>();
+        List<Book> books = bookMapper.selectList(null);
+        for (Book book : books) {
+            list.add(book.getBackImage().substring(book.getBackImage().lastIndexOf("/") + 1));
+            list.add(book.getCoverImage().substring(book.getCoverImage().lastIndexOf("/") + 1));
+        }
+        return list;
+    }
 }
+
+
+
+

@@ -21,7 +21,7 @@ public class QuartzConfig {
         return TriggerBuilder.newTrigger()
                 .forJob(myJobDetail())       // 绑定到上面那个 Job
                 .withIdentity("imgTrigger", "imgGroup") // Trigger 的唯一标识
-                .withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")) // 每20秒执行一次
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 0 1 * * ?")) // 每20秒执行一次
                 .build();
     }
 }

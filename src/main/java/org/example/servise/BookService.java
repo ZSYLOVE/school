@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.example.entitys.Book;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 public interface BookService extends IService<Book> {
@@ -19,4 +20,7 @@ public interface BookService extends IService<Book> {
     SaResult deleteBook(Long id);
     
     SaResult pageBook(Integer page, Integer size, Map<String, Object> searchMap);
+
+    List<String> getImagesNames();
+
 }
